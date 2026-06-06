@@ -506,37 +506,16 @@ $(document).ready(function() {
       ]]></add>
     </operation>
   </file>
-  <file path="catalog/view/javascript/optimblog.js">
-    <operation error="skip">
-      <search><![CDATA[/* Search Information */]]></search>
-      <add position="before"><![CDATA[
-        // переключатель вида списка для YOGA theme
-        let changeViewButtons = document.querySelectorAll('.js-chage-information-view');
-        if(changeViewButtons.length > 0){
-          const blogWrapper = document.getElementById('optimblog-list');
-
-          document.querySelectorAll('.js-chage-information-view');
-
-          changeViewButtons.forEach(changeViewButton=>{
-            changeViewButton.addEventListener('click', ()=>{
-              if(changeViewButton.dataset.viewType == 'information-block-view'){
-                // Включить на всю ширину
-                blogWrapper.className = 'optimblog-wrapper view-full';
-              }else if(changeViewButton.dataset.viewType == 'information-list-view'){
-                // Включить список
-                blogWrapper.className = 'optimblog-wrapper view-list';
-              }else if(changeViewButton.dataset.viewType == 'information-grid-view'){
-                // Включить сетку
-                blogWrapper.className = 'optimblog-wrapper view-grid';
-              }
-            });
-          });
-        }
-      ]]></add>
-    </operation>
+  <file path="catalog/controller/extension/information/category.php">
+      <operation error="skip">
+          <search><![CDATA[$this->document->addScript('catalog/view/javascript/optimblog.js');]]></search>
+          <add position="after"><![CDATA[
+              $this->document->addScript('catalog/view/javascript/optimblog-custom.js');
+          ]]></add>
+      </operation>
   </file>
   
-  <file path="/catalog/view/theme/yoga/template/common/header.twig">
+  <file path="catalog/view/theme/yoga/template/common/header.twig">
     <operation error="skip">
       <search><![CDATA[{% for style in styles %}]]></search>
       <add position="before"><![CDATA[
