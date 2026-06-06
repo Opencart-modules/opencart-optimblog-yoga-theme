@@ -19,7 +19,7 @@
     	{% endif %}
     	<div id="content" class="{{ class }}">
 			{{ content_top }}
-			
+
       		<h1>{{ heading_title }}</h1>
       		{% if theme_yoga_category_description_position == 'top' %}
         		{% if thumb or description %}
@@ -74,9 +74,36 @@
         				{% if view_show %}
         					<div class="col-sm-5 hidden-xs">
           						<div class="btn-group btn-group-sm">
-            						<button type="button" id="information-block-view" class="btn btn-default" data-toggle="tooltip" title="{{ button_block }}"><i class="fa fa-align-justify"></i></button>
-            						<button type="button" id="information-list-view" class="btn btn-default" data-toggle="tooltip" title="{{ button_list }}"><i class="fa fa-th-list"></i></button>
-            						<button type="button" id="information-grid-view" class="btn btn-default" data-toggle="tooltip" title="{{ button_grid }}"><i class="fa fa-th"></i></button>
+            						<button 
+										type="button"
+										id="information-block-view"
+										class="btn btn-default js-chage-information-view"
+										data-view-type="information-block-view"
+										data-toggle="tooltip"
+										title="{{ button_block }}"
+									>
+										<i class="fa fa-align-justify"></i>
+									</button>
+            						<button 
+										type="button"
+										id="information-list-view"
+										class="btn btn-default js-chage-information-view"
+										data-view-type="information-list-view"
+										data-toggle="tooltip"
+										title="{{ button_list }}"
+									>
+										<i class="fa fa-th-list"></i>
+									</button>
+            						<button 
+										type="button"
+										id="information-grid-view"
+										class="btn btn-default js-chage-information-view"
+										data-view-type="information-grid-view"
+										data-toggle="tooltip"
+										title="{{ button_grid }}"
+									>
+										<i class="fa fa-th"></i>
+									</button>
           						</div>
         					</div>
         				{% endif %}
@@ -114,74 +141,81 @@
         				{% endif %}
       				</div>
       			{% endif %}
-      			<div class="row row-products">
-      
-        			{% for information in informations %}
-        				<div class="information-layout {{ view }} col-product col-6 col-md-4 col-lg-3">
-        					<div class="thumbnail">
-          						<div class="carusel-article">
-            						<div class="article rounded">
-              							{% if information.thumb %}              
-              								<div class="image">
-              									<a class="article-images mb-3" href="{{ information.href }}">
-                									<img src="{{ information.thumb }}" alt="{{ information.title }}" title="{{ information.title }}" loading="lazy">
-              									</a>
-              								</div>
-              							{% endif %}
-              							<div class="caption">
-              								<h3 class="article-title font-size-125 mb-2 px-3">{{ information.title }}</h3>
-              								<p class="mb-3 px-3">
-												{{ information.description[:100] }}
-												<a class="link" href="{{ information.href }}">
-													{{ button_more }}
-												</a>
-											</p>
-                							{% if show_date %}
-                								<span class="d-flex flex-column bg-white px-3 color-dark text-dark">{{ information.date_added }}</span>
-                							{% endif %}
-              								<div class="mb-3 px-3">
-                								{% if show_author %}
-                									<span>
-														<i class="fa fa-user-o" aria-hidden="true"></i> {{ information.author }}
+      			<div class="
+						optimblog-wrapper 
+						{% if view == 'block' %}
+							view-full
+						{% elseif view == 'list' %}
+							view-list
+						{% else %}
+							view-grid
+						{% endif %}
+					"
+					id="optimblog-list">
+					{% for information in informations %}
+						<article class="ob-card">
+							
+							{% if information.thumb %}              
+								<div class="ob-image">
+									<a href="{{ information.href }}">
+										<img src="{{ information.thumb }}" alt="{{ information.title }}" title="{{ information.title }}" loading="lazy">
+									</a>
+								</div>
+							{% endif %}
+							
+							<div class="ob-content">
+								<h3 class="ob-title">{{ information.title }}</h3>
+								
+								<div class="ob-description">
+									{{ information.description[:100] }}
+									<a class="ob-link-more" href="{{ information.href }}">{{ button_more }}</a>
+								</div>
+								
+								{% if show_date %}
+									<div class="ob-date">{{ information.date_added }}</div>
+								{% endif %}
+								
+								<div class="ob-meta">
+									{% if show_author %}
+										<span class="ob-meta-item">
+											<i class="fa fa-user-o" aria-hidden="true"></i> {{ information.author }}
+										</span>
+									{% endif %}
+									
+									{% if show_author and show_review %}<span class="ob-separator">|</span>{% endif %}
+									
+									{% if show_review %}
+										<span class="ob-meta-item">
+											<i class="fa fa-comment-o" aria-hidden="true"></i> {{ information.reviews }}
+										</span>
+									{% endif %}
+									
+									{% if information.rating %}
+										<div class="ob-rating">
+											{% for i in 1..5 %}
+												{% if information.rating < i %}
+													<span class="fa fa-stack"><i class="fa fa-star-o fa-stack-2x"></i></span>
+												{% else %}
+													<span class="fa fa-stack">
+														<i class="fa fa-star fa-stack-2x"></i>
+														<i class="fa fa-star-o fa-stack-2x"></i>
 													</span>
-                								{% endif %} |
-                								{% if show_review %}
-                									<span>
-														<i class="fa fa-comment-o" aria-hidden="true"></i> {{ information.reviews }}
-													</span>
-                								{% endif %}
-                								{% if information.rating %}
-                									<p class="rating">
-														{% for i in 1..5 %}
-															{% if information.rating < i %}
-																<span class="fa fa-stack"><i class="fa fa-star-o fa-stack-2x"></i></span>
-															{% else %}
-																<span class="fa fa-stack">
-																	<i class="fa fa-star fa-stack-2x"></i>
-																	<i class="fa fa-star-o fa-stack-2x"></i>
-																</span>
-															{% endif %}
-                    									{% endfor %}
-													</p>
-            									{% endif %}
-                								<div class="mt-3">
-													<a 
-														href="{{ information.href }}"
-														type="button"
-														class="btn btn-primary"
-														title="{{ text_read }}"
-													>
-														{{ text_read }}
-													</a>
-												</div>
-              								</div>
-            							</div>
-            						</div>
-          						</div>
-         					</div>
-      					</div>
-      				{% endfor %}
-    			</div>
+												{% endif %}
+											{% endfor %}
+										</div>
+									{% endif %}
+								</div>
+								
+								<div class="ob-action">
+									<a href="{{ information.href }}" class="ob-btn" title="{{ text_read }}">
+										{{ text_read }}
+									</a>
+								</div>
+							</div>
+							
+						</article>
+					{% endfor %}
+				</div>
       			<div class="row">
         			<div class="col-sm-6 text-left">{{ pagination }}</div>
         			<div class="col-sm-6 text-right">{{ results }}</div>
@@ -214,4 +248,5 @@
     	{{ column_right }}
 	</div>
 </div>
+
 {{ footer }} 
