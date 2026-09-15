@@ -2,7 +2,7 @@
 <modification>
   <name>  OptimBlog - Шаблон YOGA</name>
   <code>optimblog-yoga</code>
-  <version>3.1.0.1</version>
+  <version>3.1.0.2</version>
   <author>Dmitriy Khokhlov | optimlab.com</author>
   <link>https://optimcart.com</link>
 
@@ -267,8 +267,8 @@
                       {% endif %}
                     </div>
                   </div>
-                </div>        
-              {% endfor %} 
+                </div>
+              {% endfor %}
             </div>
           </div>
 
@@ -354,7 +354,7 @@ $(document).ready(function() {
 		}
 	});
 });
-//--></script> 
+//--></script>
         ]]></add>
       </operation>
   </file>
@@ -506,6 +506,21 @@ $(document).ready(function() {
       ]]></add>
     </operation>
   </file>
+  <!--
+    ВАЖНО: optimblog-custom.js должен подключаться СРАЗУ ПОСЛЕ optimblog.js
+    (position="after"), а не до него и не отдельной операцией в произвольном
+    месте. Кнопки переключения вида в шаблоне Yoga используют те же id, что и
+    в базовом модуле (#information-list-view/#information-block-view/
+    #information-grid-view), поэтому на них висят обработчики click сразу от
+    обоих скриптов. optimblog-custom.js полагается на то, что его
+    addEventListener регистрируется РАНЬШЕ обработчика optimblog.js (тот
+    навешивается асинхронно, внутри $(document).ready()), и использует
+    event.stopImmediatePropagation() + проверку event.isTrusted, чтобы
+    отключить конфликтующую логику optimblog.js (в т.ч. принудительный клик
+    по кнопке "список" при каждой загрузке страницы, из-за которого
+    выставленный админом вид по умолчанию сбрасывался). Если поменять
+    порядок подключения скриптов местами — эта защита перестанет работать.
+  -->
   <file path="catalog/controller/extension/information/category.php">
       <operation error="skip">
           <search><![CDATA[$this->document->addScript('catalog/view/javascript/optimblog.js');]]></search>
@@ -514,7 +529,7 @@ $(document).ready(function() {
           ]]></add>
       </operation>
   </file>
-  
+
   <file path="catalog/view/theme/yoga/template/common/header.twig">
     <operation error="skip">
       <search><![CDATA[{% for style in styles %}]]></search>
