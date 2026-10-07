@@ -2,7 +2,7 @@
 <modification>
   <name>  OptimBlog - Шаблон YOGA</name>
   <code>optimblog-yoga</code>
-  <version>3.1.0.3</version>
+  <version>3.1.0.4</version>
   <author>Dmitriy Khokhlov | optimlab.com</author>
   <link>https://optimcart.com</link>
 
@@ -156,12 +156,11 @@
       <hr>
       {{ share }}
 
-      {% if (informations and information_related_type == 'slider') or (products and product_related_type == 'slider') %}
+      {% if informations and information_related_type == 'slider' %}
       <style>
         .optimblog-related-swiper { margin-bottom: 1.5rem; }
         .optimblog-related-swiper .swiper-slide { height: auto; display: block; }
-        .optimblog-related-swiper .swiper-slide > .thumbnail,
-        .optimblog-related-swiper .swiper-slide > .product { height: 100%; margin-bottom: 0; }
+        .optimblog-related-swiper .swiper-slide > .thumbnail { height: 100%; margin-bottom: 0; }
       </style>
       <script>
       /* Работает и со Swiper 11 (swiper-bundle темы Yoga), и со Swiper 3 (swiper.jquery.js OpenCart) */
@@ -301,73 +300,94 @@
       {% if products %}
       <h3 {% if informations %}class="mt-5"{% endif %}>{{ text_related_product }}</h3>
       {% if product_related_type == 'slider' %}
-      <div class="swiper swiper-container optimblog-related-swiper" id="optimblog-related-product">
-        <div class="swiper-wrapper">
-          {% for product in products %}
-          <div class="swiper-slide">
-            <div class="product p-2 p-sm-3">
-              {% if product.product_xdstickers is not empty %}
-                <div class="product-stickers {{ xdstickers_position }}">
-                  {% if product.product_xdstickers is not empty %}
-                    {% for xdsticker in product.product_xdstickers %}
-                      <span class="product-sticker {{xdsticker.id}}">{{xdsticker.text}}</span>
-                    {% endfor %}
-                  {% endif %}
+          <div class="carusel" >
+            <div class="d-flex" id="carusel-slider-2">
+              {% for product in products %}
+                <div class="carusel-product">
+                  <div class="product p-2 p-sm-3">
+                    {% if product.product_xdstickers is not empty %}
+                      <div class="product-stickers {{ xdstickers_position }}">
+                        {% if product.product_xdstickers is not empty %}
+                          {% for xdsticker in product.product_xdstickers %}
+                            <span class="product-sticker {{xdsticker.id}}">{{xdsticker.text}}</span>
+                          {% endfor %}
+                        {% endif %}
+                      </div>
+                    {% elseif product.sale %}
+                      <div class="product-stickers position_upleft">
+                        <span class="product-sticker" style="background-color: var(--secondary);">
+                          {{ icon_sale }} -{{ product.sale }}%
+                        </span>
+                      </div>
+                    {% endif %}
+                    <a href="{{ product.href }}" class="product-graphic">
+                      <img src="{{ product.thumb }}" alt="{{ product.name }}" loading="lazy">
+                    </a>
+                    {% if theme_yoga_wishlist or theme_yoga_compare %}
+                    <div class="product-control">
+                      {% if theme_yoga_wishlist %}
+                        <button class="btn-unstyled p-2" title="{{ button_wishlist }}" onclick="wishlist.add('{{ product.product_id }}');">{{ icon_wishlist }}</button>
+                      {% endif %}
+                      {% if theme_yoga_compare %}
+                        <button class="btn-unstyled p-2" title="{{ button_compare }}" onclick="compare.add('{{ product.product_id }}');">{{ icon_compare }}</button>
+                      {% endif %}
+                    </div>
+                    {% endif %}
+                    <div class="product-info justify-content-between">
+                      {% if product.stock %}<span class="product-info__instock mb-1">{{ product.stock }}</span>{% endif %}
+                      <a href="{{ product.href }}" class="product-info__name mb-2 mb-sm-3">{{ product.name }}</a>
+                      {% if product.price %}
+                      <div class="product-price">
+                        <span class="product-price__title">{{ text_price }}</span>
+                        {% if not product.special %}
+                          <span class="product-price__current">{{ product.price }}</span>
+                        {% else %}
+                          <span class="product-price__current">{{ product.special }}</span>
+                          <span class="product-price__old ml-2">{{ product.price }}</span>
+                        {% endif %}
+                      </div>
+                      {% endif %}
+                    </div>
+                    <div class="product-buttons">
+                      <button class="btn btn-outline-primary product-addcart d-block w-100" type="button" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');">
+                        {{ icon_cart }}<span>{{ button_cart }}</span>
+                      </button>
+                      {% if theme_yoga_oneclick %}
+                        <button class="btn btn-unstyled py-2 d-flex align-items-center btn-oneclick font-size-90 border-none" type="button" onclick="oneclick.open('{{ product.product_id }}');">
+                          <span class="d-none d-sm-block">{{ icon_oneclick }}</span>
+                          <span class="ml-sm-2">{{ button_oneclick }}</span>
+                        </button>
+                      {% endif %}
+                    </div>
+                  </div>
                 </div>
-              {% elseif product.sale %}
-                <div class="product-stickers position_upleft">
-                  <span class="product-sticker" style="background-color: var(--secondary);">
-                    {{ icon_sale }} -{{ product.sale }}%
-                  </span>
-                </div>
-              {% endif %}
-              <a href="{{ product.href }}" class="product-graphic">
-                <img src="{{ product.thumb }}" alt="{{ product.name }}" loading="lazy">
-              </a>
-              {% if theme_yoga_wishlist or theme_yoga_compare %}
-              <div class="product-control">
-                {% if theme_yoga_wishlist %}
-                  <button class="btn-unstyled p-2" title="{{ button_wishlist }}" onclick="wishlist.add('{{ product.product_id }}');">{{ icon_wishlist }}</button>
-                {% endif %}
-                {% if theme_yoga_compare %}
-                  <button class="btn-unstyled p-2" title="{{ button_compare }}" onclick="compare.add('{{ product.product_id }}');">{{ icon_compare }}</button>
-                {% endif %}
-              </div>
-              {% endif %}
-              <div class="product-info justify-content-between">
-                {% if product.stock %}<span class="product-info__instock mb-1">{{ product.stock }}</span>{% endif %}
-                <a href="{{ product.href }}" class="product-info__name mb-2 mb-sm-3">{{ product.name }}</a>
-                {% if product.price %}
-                <div class="product-price">
-                  <span class="product-price__title">{{ text_price }}</span>
-                  {% if not product.special %}
-                    <span class="product-price__current">{{ product.price }}</span>
-                  {% else %}
-                    <span class="product-price__current">{{ product.special }}</span>
-                    <span class="product-price__old ml-2">{{ product.price }}</span>
-                  {% endif %}
-                </div>
-                {% endif %}
-              </div>
-              <div class="product-buttons">
-                <button class="btn btn-outline-primary product-addcart d-block w-100" type="button" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');">
-                  {{ icon_cart }}<span>{{ button_cart }}</span>
-                </button>
-                {% if theme_yoga_oneclick %}
-                  <button class="btn btn-unstyled py-2 d-flex align-items-center btn-oneclick font-size-90 border-none" type="button" onclick="oneclick.open('{{ product.product_id }}');">
-                    <span class="d-none d-sm-block">{{ icon_oneclick }}</span>
-                    <span class="ml-sm-2">{{ button_oneclick }}</span>
-                  </button>
-                {% endif %}
-              </div>
+              {% endfor %}
             </div>
           </div>
-          {% endfor %}
-        </div>
-        <div class="swiper-button-prev optimblog-related-prev"></div>
-        <div class="swiper-button-next optimblog-related-next"></div>
-      </div>
-      <script>optimblogRelatedSlider('optimblog-related-product');</script>
+
+          <script type="module">
+                tns({
+                  container: '#carusel-slider-2',
+                  items: 2,
+                  loop: false,
+                  gutter: 16,
+                  slideBy: 'page',
+                  controlsPosition: 'top',
+                  controlsText: ['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 477.175 477.175"><path d="M145.188 238.575l215.5-215.5c5.3-5.3 5.3-13.8 0-19.1s-13.8-5.3-19.1 0l-225.1 225.1c-5.3 5.3-5.3 13.8 0 19.1l225.1 225c2.6 2.6 6.1 4 9.5 4s6.9-1.3 9.5-4c5.3-5.3 5.3-13.8 0-19.1l-215.4-215.5z"/></svg>', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 477.175 477.175"><path d="M360.731 229.075l-225.1-225.1c-5.3-5.3-13.8-5.3-19.1 0s-5.3 13.8 0 19.1l215.5 215.5-215.5 215.5c-5.3 5.3-5.3 13.8 0 19.1 2.6 2.6 6.1 4 9.5 4 3.4 0 6.9-1.3 9.5-4l225.1-225.1c5.3-5.2 5.3-13.8.1-19z"/></svg>'],
+                  nav: false,
+                  mouseDrag: true,
+                  autoplay: false,
+                  autoplayButtonOutput: false,
+                  responsive: {
+                    768: {
+                      items: 3
+                    },
+                    992: {
+                      items: 4
+                    }
+                  }
+                });
+              </script>
       {% else %}
       <div class="row row-products">
         {% for product in products %}
